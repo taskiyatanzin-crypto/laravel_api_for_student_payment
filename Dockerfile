@@ -1,9 +1,9 @@
 FROM php:8.2-cli
 
 RUN apt-get update && apt-get install -y \
-    git unzip curl zip libzip-dev
+    git unzip curl zip libzip-dev libonig-dev
 
-RUN docker-php-ext-install pdo pdo_pgsql zip
+RUN docker-php-ext-install pdo pdo_pgsql mbstring zip
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -11,7 +11,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN composer install --no-interaction --prefer-dist
+RUN composer install --no-interaction --prefer-dist --no-dev --optimize-autoloader
 
 RUN chmod -R 775 storage bootstrap/cache || true
 
