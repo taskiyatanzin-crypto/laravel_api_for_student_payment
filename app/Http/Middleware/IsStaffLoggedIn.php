@@ -16,6 +16,7 @@ class IsStaffLoggedIn
      */
     public function handle(Request $request, Closure $next): Response
 {
+
     if (!Auth::guard('staff')->check()) {
         return response()->json([
             'status' => false,
