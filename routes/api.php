@@ -3,9 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StafftController;
 
-Route::post('/login', [StafftController::class, 'login']);
+// Public routes
 Route::post('/register', [StafftController::class, 'store']);
+Route::post('/login', [StafftController::class, 'login']);
 
-
-Route::middleware(['auth:sanctum', 'role:Manager,Admin'])
-    ->get('/staff', [StafftController::class, 'index']);
+// Protected / data route
+Route::get('/staff', [StafftController::class, 'index']);
