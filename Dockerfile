@@ -1,28 +1,33 @@
 FROM php:8.2-cli
 
-# system deps
+# System dependencies
 RUN apt-get update && apt-get install -y \
-    git unzip curl zip libzip-dev libpq-dev libonig-dev libxml2-dev nodejs npm
+    git unzip curl zip libzip-dev libpq-dev libonig-dev libxml2-dev \
+    nodejs npm
 
-# php extensions
+# PHP extensions
 RUN docker-php-ext-install pdo pdo_pgsql mbstring zip
 
-# composer
+# Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
+# Copy project
 COPY . .
 
-# install backend deps
+# Install backend dependencies
 RUN composer install --no-interaction --prefer-dist --no-dev --optimize-autoloader
 
-# frontend build (Vue/Inertia)
+# Install + build frontend (Vue / Vite)
 RUN npm install
 RUN npm run build
 
-# permissions
+# Fix permissions (important for Laravel)
 RUN chmod -R 775 storage bootstrap/cache || true
 
-# Render port binding (MOST IMPORTANT)
+# Render port binding (VERY IMPORTANT)
+EXPOSE $PORT
+
+# FINAL RUN COMMAND (IMPORTANT FIX)
 CMD php -S 0.0.0.0:$PORT -t public
