@@ -15,21 +15,14 @@ class IsStaffLoggedIn
      * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
-    {
-       $staff = Auth::guard('staff') ->user();
-
-       if (!$staff) {
+{
+    if (!Auth::guard('staff')->check()) {
         return response()->json([
             'status' => false,
             'message' => 'Unauthorized'
         ], 401);
     }
-    //     if (!Auth::guard('staff')->check()) {
-    //     return response()->json([
-    //         'status' => false,
-    //         'message' => 'Unauthorized'
-    //     ], 401);
-    // }
-        return $next($request);
-    }
+
+    return $next($request);
+}
 }
