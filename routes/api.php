@@ -22,6 +22,7 @@ Route::get('/students/{id}', [StudentController::class, 'show']);
 Route::get('/student-payments/{id}', [PaymentController::class, 'studentPayments']);
 
 
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/staff', [StafftController::class, 'index']);
     Route::post('/logout', [StafftController::class, 'logout']);
