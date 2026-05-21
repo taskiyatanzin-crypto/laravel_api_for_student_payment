@@ -1,1 +1,68 @@
-*.sqlite*
+# ======================
+# OS files
+# ======================
+.DS_Store
+Thumbs.db
+
+# ======================
+# Environment / Secrets
+# ======================
+.env
+.env.*
+*.key
+*.pem
+config.json
+
+# ======================
+# Dependencies
+# ======================
+node_modules/
+venv/
+.env/
+__pycache__/
+*.pyc
+*.pyo
+
+# ======================
+# Build / Output
+# ======================
+dist/
+build/
+out/
+coverage/
+*.log
+
+# ======================
+# Python
+# ======================
+*.egg-info/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ======================
+# Node.js
+# ======================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ======================
+# IDE / Editors
+# ======================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+
+# ======================
+# Testing / Coverage
+# ======================
+coverage/
+.nyc_output/
+
+# ======================
+# Misc
+# ======================
+*.tmp
+*.bak
