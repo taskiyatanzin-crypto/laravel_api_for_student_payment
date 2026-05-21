@@ -147,8 +147,8 @@
         <table class="header-table">
             <tr>
                 <td class="header-left">
-                    <h1>MONEY RECEIPT</h1>
-                    <h2>B@tchPoint</h2>
+                    <h1>B@tchPoint</h1>
+                    <h2> MONEY RECEIPT</h2>
                 </td>
 
                 <td class="header-right">
@@ -171,7 +171,7 @@
                     <div class="info-title">Student Information</div>
 
                     <p><strong>Name:</strong> {{ $payment->student->full_name }}</p>
-
+                    <p><strong>Name:</strong> {{ $payment->student->batch_name }}</p>
                     <p><strong>Student ID:</strong>
                         {{ $payment->student->student_id }}
                     </p>
@@ -190,10 +190,12 @@
                         {{ $payment->month }}
                     </p>
 
+                    <p><strong>Course:</strong>
+                        {{ $payment->student->course_name }}
+                    </p>
                     <p><strong>Payment Method:</strong>
                         {{ $payment->payment_method }}
                     </p>
-
                     <p>
                         <strong>Status:</strong>
                         <span class="badge">
@@ -220,13 +222,13 @@
                 <tr>
                     <td>1</td>
                     <td>Monthly Coaching Fee</td>
-                    <td>৳ {{ $payment->amount }}</td>
+                    <td>{{ $payment->amount }}</td>
                 </tr>
 
                 <tr>
                     <td>2</td>
                     <td>Paid Amount</td>
-                    <td>৳ {{ $payment->paid_amount }}</td>
+                    <td> {{ $payment->paid_amount }}</td>
                 </tr>
             </tbody>
 
@@ -242,19 +244,13 @@
                     </td>
 
                     <td class="total-right">
-                        ৳ {{ $payment->paid_amount }}
+                        {{ $payment->paid_amount }}
                     </td>
                 </tr>
             </table>
 
         </div>
 
-        <!-- SIGNATURE -->
-        <div class="signature">
-            <div class="signature-line">
-                Authorized Signature
-            </div>
-        </div>
 
     </div>
 </div>
