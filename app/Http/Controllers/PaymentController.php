@@ -3,19 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Payment;
+use App\Models\Student;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
     // 📌 All payments list
-    public function index()
-    {
-        return response()->json([
-            'status' => true,
-            'payments' => Payment::with('student')->latest()->get()
-        ]);
-    }
+public function index()
+{
+    $payments = Payment::with('student')
+        ->latest()
+        ->get();
 
+    return response()->json([
+        'status' => true,
+        'message' => 'Payments fetched successfully',
+        'payments' => $payments
+    ]);
+}
     // 📌 Store new payment
 public function store(Request $request)
 {
@@ -49,5 +54,18 @@ public function store(Request $request)
         'payment' => $payment
     ]);
 }
+public function show($id)
+{
+    $student = Student::with('payments')->find($id);
 
+    if (!$student) {
+        return response()->json([
+            'message' => 'Student not found'
+        ], 404);
+    }
+
+    return response()->json([
+        'student' => $student
+    ]);
+}
 }

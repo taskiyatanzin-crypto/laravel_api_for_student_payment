@@ -15,7 +15,7 @@ class StudentController extends Controller
 
 public function index()
 {
-    $students = Student::all();
+    $students = Student::with('payments')->get();
 
     foreach ($students as $student) {
 
@@ -122,4 +122,16 @@ public function index()
     {
         //
     }
+        public function studentPayments($id)
+        {
+            $payments = Payment::with('student')
+                ->where('student_id', $id)
+                ->latest()
+                ->get();
+
+            return response()->json([
+                'status' => true,
+                'payments' => $payments
+            ]);
+        }
 }
