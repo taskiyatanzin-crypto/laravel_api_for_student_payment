@@ -93,38 +93,34 @@ class StafftController extends Controller
     /**
      * Login Section
      */
-public function login(Request $request)
-{
-    $credentials = $request->validate([
-        'email' => 'required|email',
-        'password' => 'required'
-    ]);
 
-    $staff = \App\Models\Staff::where('email', $credentials['email'])->first();
+    public function login(Request $request){
+        $creadential    = $request -> validate([
+            'email' => 'required | email',
+            'password' => 'required'
+        ]);
 
-    if (!$staff) {
-        return response()->json([
-            'status' => false,
-            'message' => 'Invalid credentials'
-        ], 401);
+        if(Auth::guard('staff') -> attempt($creadential)){
+            $staff = Auth::guard('staff')-> user();
+
+            $token = $staff->createToken('staff-token')->plainTextToken;
+
+            return response() -> json([
+                'message' => 'Login successful',
+                'staff' => $staff,
+                'token' => $token
+            ]);
+
+        }
+          return response()->json([
+                'status' => false,
+                'message' => 'Invalid credentials'
+            ], 401);
+
+
+
     }
 
-    if (!\Illuminate\Support\Facades\Hash::check($credentials['password'], $staff->password)) {
-        return response()->json([
-            'status' => false,
-            'message' => 'Invalid credentials'
-        ], 401);
-    }
-
-    $token = $staff->createToken('staff-token')->plainTextToken;
-
-    return response()->json([
-        'status' => true,
-        'message' => 'Login successful',
-        'staff' => $staff,
-        'token' => $token
-    ]);
-}
         public function logout(Request $request)
         {
             $request->user()->currentAccessToken()->delete();

@@ -4,12 +4,11 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
 
 class Staff extends Authenticatable
 {
-    use HasApiTokens;
-
-    protected $table = 'staff';
+    use HasApiTokens, Notifiable;
 
     protected $fillable = [
         'name',
@@ -21,6 +20,7 @@ class Staff extends Authenticatable
     ];
 
     protected $hidden = [
-        'password'
+        'password',
+        'remember_token',
     ];
 }
