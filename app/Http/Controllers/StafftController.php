@@ -94,32 +94,31 @@ class StafftController extends Controller
      * Login Section
      */
 
-    public function login(Request $request){
-        $creadential    = $request -> validate([
-            'email' => 'required | email',
-            'password' => 'required'
-        ]);
+public function login(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required'
+    ]);
 
-        if(Auth::guard('staff') -> attempt($creadential)){
-            $staff = Auth::guard('staff')-> user();
+    $staff = Staff::where('email', $request->email)->first();
 
-            $token = $staff->createToken('staff-token')->plainTextToken;
-
-            return response() -> json([
-                'message' => 'Login successful',
-                'staff' => $staff,
-                'token' => $token
-            ]);
-
-        }
-          return response()->json([
-                'status' => false,
-                'message' => 'Invalid credentials'
-            ], 401);
-
-
-
+    if (!$staff || !Hash::check($request->password, $staff->password)) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Invalid credentials'
+        ], 401);
     }
+
+    $token = $staff->createToken('staff-token')->plainTextToken;
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Login successful',
+        'staff' => $staff,
+        'token' => $token
+    ]);
+}
 
         public function logout(Request $request)
         {
