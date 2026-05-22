@@ -63,7 +63,7 @@ class StafftController extends Controller
         return response() -> json([
             'status' => true,
             'Staff' => $staff
-        ]); 
+        ]);
     }
 
     /**
@@ -93,45 +93,49 @@ class StafftController extends Controller
     /**
      * Login Section
      */
+public function login(Request $request)
+{
+    $credentials = $request->validate([
+        'email' => 'required|email',
+        'password' => 'required'
+    ]);
 
-    public function login(Request $request){
-        $creadential    = $request -> validate([
-            'email' => 'required | email',
-            'password' => 'required'
-        ]);
+    $staff = \App\Models\Staff::where('email', $credentials['email'])->first();
 
-        if(Auth::guard('staff') -> attempt($creadential)){
-            $staff = Auth::guard('staff')-> user();
-            
-            $token = $staff->createToken('staff-token')->plainTextToken;
+    if (!$staff) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Invalid credentials'
+        ], 401);
+    }
 
-            return response() -> json([
-                'message' => 'Login successful',
-                'staff' => $staff,
-                'token' => $token
-            ]);
+    if (!\Illuminate\Support\Facades\Hash::check($credentials['password'], $staff->password)) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Invalid credentials'
+        ], 401);
+    }
 
-        }
-          return response()->json([
-                'status' => false,
-                'message' => 'Invalid credentials'
-            ], 401);
+    $token = $staff->createToken('staff-token')->plainTextToken;
 
-
-
-    } 
-    
+    return response()->json([
+        'status' => true,
+        'message' => 'Login successful',
+        'staff' => $staff,
+        'token' => $token
+    ]);
+}
         public function logout(Request $request)
         {
             $request->user()->currentAccessToken()->delete();
-            
+
             return response()->json([
                 'status' => true,
                 'message' => 'Logout successful'
             ]);
         }
 
-    
+
 
 
 
