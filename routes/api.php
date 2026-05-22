@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\StafftController;
@@ -7,7 +8,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PdfController;
 
-
+Route::post('/login', [AuthenticatedSessionController::class, 'login']);
 
 Route::post('/register', [StafftController::class, 'store']);
 Route::post('/login', [StafftController::class, 'login']);
