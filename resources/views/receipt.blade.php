@@ -196,6 +196,7 @@
                     <p><strong>Payment Method:</strong>
                         {{ $payment->payment_method }}
                     </p>
+
                     <p>
                         <strong>Status:</strong>
                         <span class="badge">
