@@ -1,4 +1,4 @@
-# ---------- Stage 1: PHP Dependencies ----------
+# ---------- Stage 1: Base App ----------
 FROM php:8.2-cli AS backend
 
 RUN apt-get update && apt-get install -y \
@@ -7,35 +7,33 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /var/www
 
-# install composer
+# composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# copy composer files first
-COPY composer.json composer.lock ./
-
-# install php dependencies first (important!)
-RUN composer install --no-dev --optimize-autoloader --no-interaction
-
-# copy project
+# copy everything first
 COPY . .
 
-# ---------- Stage 2: Frontend Build ----------
+# install php deps
+RUN composer install \
+    --no-dev \
+    --optimize-autoloader \
+    --no-interaction
+
+# ---------- Stage 2: Frontend ----------
 FROM node:22 AS frontend
 
 WORKDIR /app
 
-# copy app with vendor folder
+# copy app including vendor/
 COPY --from=backend /var/www ./
 
 # install node deps
-COPY package*.json ./
 RUN npm install
 
 # build vite
 RUN npm run build
 
-
-# ---------- Stage 3: Final App ----------
+# ---------- Stage 3: Production ----------
 FROM php:8.2-cli
 
 RUN apt-get update && apt-get install -y \
@@ -46,22 +44,20 @@ WORKDIR /var/www
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# copy app
+# copy backend
 COPY --from=backend /var/www ./
 
-# copy frontend build
+# copy built assets
 COPY --from=frontend /app/public/build ./public/build
 
 # permissions
 RUN chmod -R 775 storage bootstrap/cache || true
 
-# laravel cache
-RUN php artisan config:clear || true
-RUN php artisan cache:clear || true
-RUN php artisan route:clear || true
-RUN php artisan view:clear || true
-
+# clear/cache safely
+RUN php artisan optimize:clear || true
 RUN php artisan config:cache || true
+RUN php artisan route:cache || true
+RUN php artisan view:cache || true
 
 EXPOSE 10000
 
