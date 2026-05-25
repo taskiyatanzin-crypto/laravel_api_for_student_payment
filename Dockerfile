@@ -1,44 +1,38 @@
 FROM php:8.2-cli
 
-# Install system dependencies
+# system dependencies
 RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
-    zip \
-    curl \
-    libpq-dev \
-    libzip-dev \
-    && docker-php-ext-install \
-    pdo \
-    pdo_mysql \
-    pdo_pgsql \
-    pgsql \
-    zip
+    git unzip zip curl libpq-dev
 
-# Set working directory
+# PHP extensions (PostgreSQL support)
+RUN docker-php-ext-install pdo pdo_pgsql pgsql
+
+# verify extension (debug only)
+RUN php -m | grep pgsql
+
+# working directory
 WORKDIR /var/www
 
-# Install Composer
+# install composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy project files
-COPY . .
+# copy project
+COPY . /var/www
 
-# Install Laravel dependencies
+# install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Clear Laravel caches
+# Laravel cache safety (BEST PRACTICE ORDER)
 RUN php artisan config:clear || true
 RUN php artisan cache:clear || true
 RUN php artisan route:clear || true
 RUN php artisan view:clear || true
 
-# Expose Render port
+# rebuild cache (IMPORTANT)
+RUN php artisan config:cache
+
+# expose port (Render requirement)
 EXPOSE 10000
 
-# Start Laravel using Render dynamic port
-CMD sh -c "\
-php artisan config:clear && \
-php artisan cache:clear && \
-php artisan route:clear && \
-php artisan serve --host=0.0.0.0 --port=${PORT:-10000}"
+# start server
+CMD php artisan serve --host=0.0.0.0 --port=10000
