@@ -27,3 +27,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/staff', [StafftController::class, 'index']);
     Route::post('/logout', [StafftController::class, 'logout']);
 });
+
+
+Route::get('/receipt-file/{file}', function ($file) {
+
+    $path = storage_path("app/public/receipts/$file");
+
+    if (!file_exists($path)) {
+        abort(404);
+    }
+
+    return response()->file($path);
+});
