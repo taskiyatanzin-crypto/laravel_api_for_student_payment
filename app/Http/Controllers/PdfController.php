@@ -13,13 +13,7 @@ public function downloadReceipt($id)
 
     $pdf = Pdf::loadView('receipt', compact('payment'));
 
-    $fileName = 'receipt_' . $id . '.pdf';
-
-    Storage::disk('public')->put('receipts/' . $fileName, $pdf->output());
-
-    return response()->json([
-        'status' => true,
-        'url' => url("/api/receipt-file/" . $fileName)
-    ]);
+    return response($pdf->output(), 200)
+        ->header('Content-Type', 'application/pdf');
 }
 }
