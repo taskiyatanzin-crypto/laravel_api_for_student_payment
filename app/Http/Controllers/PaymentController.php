@@ -3,45 +3,98 @@
 namespace App\Http\Controllers;
 
 use App\Models\Payment;
-use Barryvdh\DomPDF\Facade\Pdf;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Illuminate\Http\Request;
 
-class PdfController extends Controller
+class PaymentController extends Controller
 {
-   public function whatsappMessage($id)
-{
-    $payment = Payment::with('student')->findOrFail($id);
+    /* =========================
+        ALL PAYMENTS LIST
+    ========================= */
+    public function index()
+    {
+        $payments = Payment::with('student')
+            ->latest()
+            ->get();
 
-    // phone safe format
-    $phone = $payment->student->phone ?? null;
-
-    if (!$phone) {
         return response()->json([
-            'error' => 'Phone number missing'
-        ], 422);
+            'status' => true,
+            'message' => 'Payments fetched successfully',
+            'payments' => $payments
+        ]);
     }
 
-    $phone = preg_replace('/^0/', '88', $phone);
+    /* =========================
+        STORE PAYMENT
+    ========================= */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'student_id' => 'required|exists:students,id',
+            'amount' => 'required|numeric',
+            'paid_amount' => 'required|numeric',
+            'payment_method' => 'nullable|string',
+            'payment_date' => 'nullable|date',
+            'month' => 'required|string',
+        ]);
 
-    // receipt URL (same as your PDF endpoint)
-    $pdfUrl = url("/api/payments/{$id}/receipt");
+        $due = $request->amount - $request->paid_amount;
 
-    // clean professional message
-    $message = "📄 Payment Receipt\n"
-        . "---------------------\n"
-        . "Receipt ID: {$payment->id}\n"
-        . "Name: {$payment->student->full_name}\n"
-        . "Class: {$payment->student->batch_name}\n"
-        . "Month: {$payment->month}\n"
-        . "Paid: ৳{$payment->paid_amount}\n"
-        . "Status: {$payment->status}\n\n"
-        . "Download Receipt:\n{$pdfUrl}";
+        $payment = Payment::create([
+            'student_id' => $request->student_id,
+            'amount' => $request->amount,
+            'paid_amount' => $request->paid_amount,
+            'due_amount' => $due,
+            'payment_method' => $request->payment_method,
+            'payment_date' => $request->payment_date,
+            'month' => $request->month,
+            'status' => $due <= 0 ? 'paid' : 'due',
+        ]);
 
-    return response()->json([
-        'phone' => $phone,
-        'message' => $message
-    ]);
+        // relation load
+        $payment->load('student');
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Payment created successfully',
+            'payment' => $payment
+        ]);
+    }
+
+    /* =========================
+        SINGLE PAYMENT (MOST IMPORTANT)
+    ========================= */
+    public function show($id)
+    {
+        $payment = Payment::with('student')
+            ->where('id', $id)
+            ->first();
+
+        if (!$payment) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Payment not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => true,
+            'payment' => $payment
+        ]);
+    }
+
+    /* =========================
+        STUDENT PAYMENT HISTORY
+    ========================= */
+    public function studentPayments($id)
+    {
+        $payments = Payment::with('student')
+            ->where('student_id', $id)
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'payments' => $payments
+        ]);
+    }
 }
-}
-
-

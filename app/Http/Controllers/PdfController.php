@@ -5,47 +5,58 @@ namespace App\Http\Controllers;
 use App\Models\Payment;
 use Barryvdh\DomPDF\Facade\Pdf;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
-use Illuminate\Support\Facades\Storage;
 
 class PdfController extends Controller
 {
     public function downloadReceipt($id)
     {
-        $payment = Payment::with('student')->findOrFail($id);
+        try {
+            // 1. payment load with student
+            $payment = Payment::with('student')->findOrFail($id);
 
-        // 1. PDF generate
-        $pdf = Pdf::loadView('receipt', compact('payment'));
+            // 2. generate PDF from blade view
+            $pdf = Pdf::loadView('receipt', compact('payment'));
 
-        // 2. temp file path বানানো
-        $fileName = 'receipt_' . $payment->id . '.pdf';
-        $filePath = storage_path("app/public/receipts/" . $fileName);
+            // 3. create safe file name
+            $fileName = 'receipt_' . $payment->id . '.pdf';
 
-        // 3. folder ensure করা
-        if (!file_exists(storage_path("app/public/receipts"))) {
-            mkdir(storage_path("app/public/receipts"), 0777, true);
+            // 4. temp path (Laravel storage temp safe)
+            $filePath = storage_path("app/temp_" . $fileName);
+
+            // 5. save PDF temporarily
+            file_put_contents($filePath, $pdf->output());
+
+            // 6. upload to cloudinary (safe)
+            $uploadedFile = Cloudinary::upload($filePath, [
+                'folder' => 'receipts'
+            ]);
+
+            $url = $uploadedFile->getSecurePath();
+
+            // 7. update DB (optional safe guard)
+            if ($payment) {
+                $payment->receipt_url = $url;
+                $payment->save();
+            }
+
+            // 8. delete temp file safely
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+
+            // 9. return response
+            return response()->json([
+                'success' => true,
+                'url' => $url
+            ]);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Receipt generation failed',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        // 4. PDF save locally (temp)
-        file_put_contents($filePath, $pdf->output());
-
-        // 5. Cloudinary upload
-        $uploadedFile = Cloudinary::upload($filePath, [
-            'folder' => 'receipts'
-        ]);
-
-        $url = $uploadedFile->getSecurePath();
-
-        // 6. optional DB save (if needed)
-        $payment->receipt_url = $url;
-        $payment->save();
-
-        // 7. file delete (cleanup)
-        unlink($filePath);
-
-        // 8. return PDF OR URL
-        return response()->json([
-            'success' => true,
-            'url' => $url
-        ]);
     }
 }
