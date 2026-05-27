@@ -44,6 +44,9 @@ COPY --from=frontend /app/public/build ./public/build
 
 RUN chmod -R 775 storage bootstrap/cache || true
 
+# ✅ FIX: storage link added (IMPORTANT)
+RUN php artisan storage:link || true
+
 EXPOSE 10000
 
 CMD sh -c "php artisan optimize:clear && \
