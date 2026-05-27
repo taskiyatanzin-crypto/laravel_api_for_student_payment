@@ -50,3 +50,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/staff', [StafftController::class, 'index']);
     Route::post('/logout', [StafftController::class, 'logout']);
 });
+
+Route::get('/payments/{id}/whatsapp', [PaymentController::class, 'whatsappMessage']);

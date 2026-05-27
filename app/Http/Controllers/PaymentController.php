@@ -8,41 +8,40 @@ use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class PdfController extends Controller
 {
-    public function downloadReceipt($id)
-    {
-        $payment = Payment::with('student')->findOrFail($id);
+   public function whatsappMessage($id)
+{
+    $payment = Payment::with('student')->findOrFail($id);
 
-        // 1️⃣ PDF generate (same logic)
-        $pdf = Pdf::loadView('receipt', compact('payment'));
+    // phone safe format
+    $phone = $payment->student->phone ?? null;
 
-        // 2️⃣ temp file create
-        $fileName = 'receipt_' . $payment->id . '.pdf';
-        $filePath = storage_path("app/temp_" . $fileName);
-
-        // ensure storage folder exists
-        if (!file_exists(storage_path("app"))) {
-            mkdir(storage_path("app"), 0777, true);
-        }
-
-        // save PDF temporarily
-        file_put_contents($filePath, $pdf->output());
-
-        // 3️⃣ upload to Cloudinary
-        $uploadedFile = Cloudinary::upload($filePath, [
-            'folder' => 'receipts'
-        ]);
-
-        // get URL
-        $url = $uploadedFile->getSecurePath();
-
-        // 4️⃣ cleanup
-        if (file_exists($filePath)) {
-            unlink($filePath);
-        }
-
-        // 5️⃣ return ONLY URL (frontend unchanged)
+    if (!$phone) {
         return response()->json([
-            'url' => $url
-        ]);
+            'error' => 'Phone number missing'
+        ], 422);
     }
+
+    $phone = preg_replace('/^0/', '88', $phone);
+
+    // receipt URL (same as your PDF endpoint)
+    $pdfUrl = url("/api/payments/{$id}/receipt");
+
+    // clean professional message
+    $message = "📄 Payment Receipt\n"
+        . "---------------------\n"
+        . "Receipt ID: {$payment->id}\n"
+        . "Name: {$payment->student->full_name}\n"
+        . "Class: {$payment->student->batch_name}\n"
+        . "Month: {$payment->month}\n"
+        . "Paid: ৳{$payment->paid_amount}\n"
+        . "Status: {$payment->status}\n\n"
+        . "Download Receipt:\n{$pdfUrl}";
+
+    return response()->json([
+        'phone' => $phone,
+        'message' => $message
+    ]);
 }
+}
+
+
