@@ -44,12 +44,12 @@ COPY --from=frontend /app/public/build ./public/build
 
 RUN chmod -R 775 storage bootstrap/cache || true
 
-# ✅ FIX: storage link added (IMPORTANT)
-RUN php artisan storage:link || true
 
+# ⚠️ runtime caching only (safe)
+CMD php artisan optimize:clear && \
+    php artisan config:cache && \
+    php artisan migrate --force && \
+    php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
+=======
 EXPOSE 10000
 
-CMD sh -c "php artisan optimize:clear && \
-           php artisan config:cache && \
-           php artisan migrate --force && \
-           php artisan serve --host=0.0.0.0 --port=${PORT:-10000}"
