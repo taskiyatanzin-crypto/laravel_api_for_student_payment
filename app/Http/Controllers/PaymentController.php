@@ -3,46 +3,98 @@
 namespace App\Http\Controllers;
 
 use App\Models\Payment;
-use Barryvdh\DomPDF\Facade\Pdf;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Illuminate\Http\Request;
 
-class PdfController extends Controller
+class PaymentController extends Controller
 {
-    public function downloadReceipt($id)
+    /* =========================
+        ALL PAYMENTS LIST
+    ========================= */
+    public function index()
     {
-        $payment = Payment::with('student')->findOrFail($id);
+        $payments = Payment::with('student')
+            ->latest()
+            ->get();
 
-        // 1️⃣ PDF generate (same logic)
-        $pdf = Pdf::loadView('receipt', compact('payment'));
+        return response()->json([
+            'status' => true,
+            'message' => 'Payments fetched successfully',
+            'payments' => $payments
+        ]);
+    }
 
-        // 2️⃣ temp file create
-        $fileName = 'receipt_' . $payment->id . '.pdf';
-        $filePath = storage_path("app/temp_" . $fileName);
-
-        // ensure storage folder exists
-        if (!file_exists(storage_path("app"))) {
-            mkdir(storage_path("app"), 0777, true);
-        }
-
-        // save PDF temporarily
-        file_put_contents($filePath, $pdf->output());
-
-        // 3️⃣ upload to Cloudinary
-        $uploadedFile = Cloudinary::upload($filePath, [
-            'folder' => 'receipts'
+    /* =========================
+        STORE PAYMENT
+    ========================= */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'student_id' => 'required|exists:students,id',
+            'amount' => 'required|numeric',
+            'paid_amount' => 'required|numeric',
+            'payment_method' => 'nullable|string',
+            'payment_date' => 'nullable|date',
+            'month' => 'required|string',
         ]);
 
-        // get URL
-        $url = $uploadedFile->getSecurePath();
+        $due = $request->amount - $request->paid_amount;
 
-        // 4️⃣ cleanup
-        if (file_exists($filePath)) {
-            unlink($filePath);
+        $payment = Payment::create([
+            'student_id' => $request->student_id,
+            'amount' => $request->amount,
+            'paid_amount' => $request->paid_amount,
+            'due_amount' => $due,
+            'payment_method' => $request->payment_method,
+            'payment_date' => $request->payment_date,
+            'month' => $request->month,
+            'status' => $due <= 0 ? 'paid' : 'due',
+        ]);
+
+        // relation load
+        $payment->load('student');
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Payment created successfully',
+            'payment' => $payment
+        ]);
+    }
+
+    /* =========================
+        SINGLE PAYMENT (MOST IMPORTANT)
+    ========================= */
+    public function show($id)
+    {
+        $payment = Payment::with('student')
+            ->where('id', $id)
+            ->first();
+
+        if (!$payment) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Payment not found'
+            ], 404);
         }
 
-        // 5️⃣ return ONLY URL (frontend unchanged)
         return response()->json([
-            'url' => $url
+            'status' => true,
+            'payment' => $payment
+        ]);
+    }
+
+    /* =========================
+        STUDENT PAYMENT HISTORY
+    ========================= */
+    public function studentPayments($id)
+    {
+        $payments = Payment::with('student')
+            ->where('student_id', $id)
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'payments' => $payments
         ]);
     }
 }
