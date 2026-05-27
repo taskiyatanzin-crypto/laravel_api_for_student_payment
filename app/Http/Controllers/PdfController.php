@@ -11,40 +11,47 @@ class PdfController extends Controller
     public function downloadReceipt($id)
     {
         try {
-            // 1. payment load with student
+
+            // 1. payment load
             $payment = Payment::with('student')->findOrFail($id);
 
-            // 2. generate PDF from blade view
+            // 2. PDF generate
             $pdf = Pdf::loadView('receipt', compact('payment'));
 
-            // 3. create safe file name
-            $fileName = 'receipt_' . $payment->id . '.pdf';
+            // 3. temp folder path
+            $tempDir = storage_path('app/temp');
 
-            // 4. temp path (Laravel storage temp safe)
-            $filePath = storage_path("app/temp_" . $fileName);
-
-            // 5. save PDF temporarily
-            file_put_contents($filePath, $pdf->output());
-
-            // 6. upload to cloudinary (safe)
-            $uploadedFile = Cloudinary::upload($filePath, [
-                'folder' => 'receipts'
-            ]);
-
-            $url = $uploadedFile->getSecurePath();
-
-            // 7. update DB (optional safe guard)
-            if ($payment) {
-                $payment->receipt_url = $url;
-                $payment->save();
+            // folder না থাকলে create করবে
+            if (!file_exists($tempDir)) {
+                mkdir($tempDir, 0777, true);
             }
 
-            // 8. delete temp file safely
+            // 4. temp file name
+            $fileName = 'receipt_' . $payment->id . '.pdf';
+            $filePath = $tempDir . '/' . $fileName;
+
+            // 5. save temporary PDF
+            file_put_contents($filePath, $pdf->output());
+
+            // 6. upload PDF to Cloudinary
+            $uploadedFile = Cloudinary::upload($filePath, [
+                'folder' => 'receipts',
+                'resource_type' => 'raw', // PDF upload safe
+            ]);
+
+            // secure URL
+            $url = $uploadedFile->getSecurePath();
+
+            // 7. save URL in DB (optional)
+            $payment->receipt_url = $url;
+            $payment->save();
+
+            // 8. delete temp file
             if (file_exists($filePath)) {
                 unlink($filePath);
             }
 
-            // 9. return response
+            // 9. success response
             return response()->json([
                 'success' => true,
                 'url' => $url
@@ -52,6 +59,7 @@ class PdfController extends Controller
 
         } catch (\Exception $e) {
 
+            // debug error response
             return response()->json([
                 'success' => false,
                 'message' => 'Receipt generation failed',
