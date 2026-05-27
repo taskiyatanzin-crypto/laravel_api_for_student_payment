@@ -56,7 +56,6 @@
         .info-box{
             width:48%;
             border:1px solid #ddd;
-            border-radius:10px;
             padding:20px;
             vertical-align:top;
         }
@@ -103,7 +102,6 @@
             background:#eef3fb;
             padding:25px;
             border-left:6px solid #1565f9;
-            border-radius:8px;
         }
 
         .total-table{
@@ -120,20 +118,6 @@
             color:#1565f9;
             font-weight:bold;
         }
-
-        .signature{
-            margin-top:80px;
-            text-align:right;
-        }
-
-        .signature-line{
-            display:inline-block;
-            border-top:2px solid #000;
-            padding-top:10px;
-            width:250px;
-            text-align:center;
-            font-weight:bold;
-        }
     </style>
 </head>
 
@@ -148,12 +132,14 @@
             <tr>
                 <td class="header-left">
                     <h1>B@tchPoint</h1>
-                    <h2> MONEY RECEIPT</h2>
+                    <h2>MONEY RECEIPT</h2>
                 </td>
 
                 <td class="header-right">
-                    <strong>Receipt No: #{{ $payment->id }}</strong><br><br>
-                    Date: {{ $payment->payment_date }}
+                    <strong>Receipt No: #{{ $payment->id }}</strong>
+                    <br><br>
+                    Date:
+                    {{ $payment->payment_date ?? 'N/A' }}
                 </td>
             </tr>
         </table>
@@ -167,48 +153,73 @@
         <table class="info-table">
             <tr>
 
+                <!-- Student Info -->
                 <td class="info-box">
-                    <div class="info-title">Student Information</div>
 
-                    <p><strong>Name:</strong> {{ $payment->student->full_name }}</p>
-                    <p><strong>Name:</strong> {{ $payment->student->batch_name }}</p>
-                    <p><strong>Student ID:</strong>
-                        {{ $payment->student->student_id }}
+                    <div class="info-title">
+                        Student Information
+                    </div>
+
+                    <p>
+                        <strong>Name:</strong>
+                        {{ $payment->student?->full_name ?? 'N/A' }}
                     </p>
 
-                    <p><strong>Phone:</strong>
-                        {{ $payment->student->phone }}
+                    <p>
+                        <strong>Batch:</strong>
+                        {{ $payment->student?->batch_name ?? 'N/A' }}
                     </p>
+
+                    <p>
+                        <strong>Student ID:</strong>
+                        {{ $payment->student?->student_id ?? 'N/A' }}
+                    </p>
+
+                    <p>
+                        <strong>Phone:</strong>
+                        {{ $payment->student?->phone ?? 'N/A' }}
+                    </p>
+
                 </td>
 
                 <td width="4%"></td>
 
+                <!-- Payment Info -->
                 <td class="info-box">
-                    <div class="info-title">Payment Information</div>
 
-                    <p><strong>Month:</strong>
-                        {{ $payment->month }}
+                    <div class="info-title">
+                        Payment Information
+                    </div>
+
+                    <p>
+                        <strong>Month:</strong>
+                        {{ $payment->month ?? 'N/A' }}
                     </p>
 
-                    <p><strong>Course:</strong>
-                        {{ $payment->student->course_name }}
+                    <p>
+                        <strong>Course:</strong>
+                        {{ $payment->student?->course_name ?? 'N/A' }}
                     </p>
-                    <p><strong>Payment Method:</strong>
-                        {{ $payment->payment_method }}
+
+                    <p>
+                        <strong>Payment Method:</strong>
+                        {{ $payment->payment_method ?? 'N/A' }}
                     </p>
 
                     <p>
                         <strong>Status:</strong>
+
                         <span class="badge">
-                            {{ ucfirst($payment->status) }}
+                            {{ ucfirst($payment->status ?? 'N/A') }}
                         </span>
                     </p>
+
                 </td>
 
             </tr>
         </table>
 
-        <!-- TABLE -->
+        <!-- PAYMENT TABLE -->
         <table class="payment-table">
 
             <thead>
@@ -220,17 +231,23 @@
             </thead>
 
             <tbody>
+
                 <tr>
                     <td>1</td>
                     <td>Monthly Coaching Fee</td>
-                    <td>{{ $payment->amount }}</td>
+                    <td>
+                        ৳ {{ $payment->amount ?? 0 }}
+                    </td>
                 </tr>
 
                 <tr>
                     <td>2</td>
                     <td>Paid Amount</td>
-                    <td> {{ $payment->paid_amount }}</td>
+                    <td>
+                        ৳ {{ $payment->paid_amount ?? 0 }}
+                    </td>
                 </tr>
+
             </tbody>
 
         </table>
@@ -240,18 +257,19 @@
 
             <table class="total-table">
                 <tr>
+
                     <td class="total-left">
                         Total Paid
                     </td>
 
                     <td class="total-right">
-                        {{ $payment->paid_amount }}
+                        ৳ {{ $payment->paid_amount ?? 0 }}
                     </td>
+
                 </tr>
             </table>
 
         </div>
-
 
     </div>
 </div>
