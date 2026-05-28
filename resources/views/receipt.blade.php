@@ -9,27 +9,27 @@
         body{
             font-family: DejaVu Sans, sans-serif;
             background:#f3f5fa;
-            padding:25px;
+            padding:10px;
             color:#222;
         }
 
         .receipt{
-            max-width:780px;
+            max-width:700px;
             margin:auto;
             background:#fff;
-            border-radius:12px;
             border:1px solid #dfe6f3;
+            border-radius:8px;
             overflow:hidden;
         }
 
         /* HEADER */
 
         .header{
-            padding:35px 35px 20px;
+            padding:18px 22px 12px;
         }
 
         .brand{
-            font-size:58px;
+            font-size:34px;
             font-weight:700;
             color:#0d47a1;
             margin:0;
@@ -37,57 +37,57 @@
         }
 
         .receipt-title{
-            margin-top:12px;
-            font-size:24px;
+            margin-top:6px;
+            font-size:16px;
             color:#666;
-            letter-spacing:1px;
         }
 
         .receipt-title span{
             color:#0d47a1;
-            margin:0 10px;
             font-weight:bold;
+            margin:0 6px;
         }
 
         .receipt-info{
             text-align:right;
-            font-size:15px;
-            line-height:2;
-        }
-
-        .receipt-info strong{
-            color:#111;
+            font-size:12px;
+            line-height:1.8;
         }
 
         .receipt-id{
             background:#0d47a1;
             color:#fff;
-            padding:6px 14px;
-            border-radius:5px;
+            padding:4px 10px;
+            border-radius:4px;
             font-weight:700;
             display:inline-block;
         }
 
         .top-line{
-            height:3px;
+            height:2px;
             background:#0d47a1;
-            margin-top:25px;
-            border-radius:30px;
+            margin-top:12px;
         }
 
-        /* BODY */
+        /* CONTENT */
 
         .content{
-            padding:30px 35px;
+            padding:16px 22px 20px;
         }
 
-        /* BOX */
+        /* INFO BOX */
 
         .info-box{
-            border:1px solid #d7dfed;
-            border-radius:10px;
+            border:1px solid #dbe3f0;
+            border-radius:7px;
             overflow:hidden;
             background:#fff;
+        }
+
+        .info-header{
+            padding:10px 14px;
+            font-size:15px;
+            font-weight:700;
         }
 
         .student-header{
@@ -96,24 +96,18 @@
         }
 
         .payment-header{
-            background:#eefaf1;
+            background:#eefbf1;
             color:#198754;
         }
 
-        .info-header{
-            padding:16px 20px;
-            font-size:22px;
-            font-weight:700;
-        }
-
         .info-content{
-            padding:15px 18px;
+            padding:10px 14px;
         }
 
         .info-row{
-            padding:12px 0;
-            border-bottom:1px solid #ececec;
-            font-size:15px;
+            padding:7px 0;
+            border-bottom:1px solid #eee;
+            font-size:12px;
         }
 
         .info-row:last-child{
@@ -121,7 +115,7 @@
         }
 
         .label{
-            width:85px;
+            width:55px;
             display:inline-block;
             font-weight:700;
         }
@@ -131,9 +125,9 @@
         .status{
             background:#198754;
             color:#fff;
-            padding:5px 12px;
-            border-radius:6px;
-            font-size:13px;
+            padding:2px 7px;
+            border-radius:4px;
+            font-size:10px;
             font-weight:700;
         }
 
@@ -142,41 +136,41 @@
         .payment-table{
             width:100%;
             border-collapse:collapse;
-            margin-top:28px;
+            margin-top:18px;
         }
 
         .payment-table th{
             background:#0d47a1;
             color:#fff;
-            padding:14px;
+            padding:9px;
             text-align:left;
-            font-size:15px;
+            font-size:12px;
         }
 
         .payment-table td{
-            border:1px solid #e9edf5;
-            padding:14px;
-            font-size:15px;
+            border:1px solid #eceff5;
+            padding:9px;
+            font-size:12px;
         }
 
         /* TOTAL */
 
         .total-box{
-            margin-top:28px;
-            border:2px solid #cfdcf3;
-            border-radius:12px;
+            margin-top:18px;
+            border:1px solid #cfdcf3;
+            border-radius:8px;
             background:#f8fbff;
-            padding:22px 25px;
+            padding:14px 18px;
         }
 
         .total-title{
-            font-size:32px;
+            font-size:18px;
             font-weight:700;
             color:#0d47a1;
         }
 
         .total-amount{
-            font-size:38px;
+            font-size:22px;
             font-weight:700;
             color:#0d47a1;
             text-align:right;
@@ -186,19 +180,19 @@
 
         .footer{
             text-align:center;
-            padding:28px 20px 35px;
+            padding:14px 10px 18px;
             color:#0d47a1;
             font-style:italic;
-            font-size:26px;
+            font-size:14px;
         }
 
         .line{
-            width:130px;
-            height:2px;
+            width:70px;
+            height:1px;
             background:#0d47a1;
             display:inline-block;
             vertical-align:middle;
-            margin:0 12px;
+            margin:0 8px;
         }
 
     </style>
@@ -266,32 +260,28 @@
                     <div class="info-box">
 
                         <div class="info-header student-header">
-                            👤 STUDENT INFO
+                            STUDENT INFO
                         </div>
 
                         <div class="info-content">
 
                             <div class="info-row">
                                 <span class="label">Name</span>
-                                :
                                 {{ $payment->student?->full_name ?? 'N/A' }}
                             </div>
 
                             <div class="info-row">
                                 <span class="label">Batch</span>
-                                :
                                 {{ $payment->student?->batch_name ?? 'N/A' }}
                             </div>
 
                             <div class="info-row">
                                 <span class="label">ID</span>
-                                :
                                 {{ $payment->student?->student_id ?? 'N/A' }}
                             </div>
 
                             <div class="info-row">
                                 <span class="label">Phone</span>
-                                :
                                 {{ $payment->student?->phone ?? 'N/A' }}
                             </div>
 
@@ -310,32 +300,28 @@
                     <div class="info-box">
 
                         <div class="info-header payment-header">
-                            💳 PAYMENT INFO
+                            PAYMENT INFO
                         </div>
 
                         <div class="info-content">
 
                             <div class="info-row">
                                 <span class="label">Month</span>
-                                :
                                 {{ $payment->month ?? 'N/A' }}
                             </div>
 
                             <div class="info-row">
                                 <span class="label">Course</span>
-                                :
                                 {{ $payment->student?->course_name ?? 'N/A' }}
                             </div>
 
                             <div class="info-row">
                                 <span class="label">Method</span>
-                                :
                                 {{ $payment->payment_method ?? 'N/A' }}
                             </div>
 
                             <div class="info-row">
                                 <span class="label">Status</span>
-                                :
 
                                 <span class="status">
                                     {{ ucfirst($payment->status ?? 'N/A') }}
@@ -352,7 +338,7 @@
             </tr>
         </table>
 
-        <!-- PAYMENT TABLE -->
+        <!-- TABLE -->
 
         <table class="payment-table">
 
@@ -390,7 +376,7 @@
                 <tr>
 
                     <td class="total-title">
-                        🧾 TOTAL PAID
+                        TOTAL PAID
                     </td>
 
                     <td class="total-amount">
