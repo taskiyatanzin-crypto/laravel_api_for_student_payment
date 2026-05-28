@@ -2,33 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Money Receipt</title>
 
     <style>
+
         body{
             font-family: DejaVu Sans, sans-serif;
-            background:#f4f6fb;
-            padding:20px;
-            color:#333;
+            background:#f3f5fa;
+            padding:25px;
+            color:#222;
         }
 
-        .receipt-container{
-            max-width:750px;
+        .receipt{
+            max-width:780px;
             margin:auto;
             background:#fff;
             border-radius:12px;
-            border:1px solid #dbe3f0;
+            border:1px solid #dfe6f3;
             overflow:hidden;
         }
 
         /* HEADER */
-        .receipt-header{
-            padding:25px 30px 15px;
+
+        .header{
+            padding:35px 35px 20px;
         }
 
         .brand{
-            font-size:42px;
+            font-size:58px;
             font-weight:700;
             color:#0d47a1;
             margin:0;
@@ -36,45 +37,57 @@
         }
 
         .receipt-title{
-            font-size:20px;
+            margin-top:12px;
+            font-size:24px;
             color:#666;
-            margin-top:10px;
+            letter-spacing:1px;
         }
 
-        .receipt-top-line{
-            height:3px;
-            background:#0d47a1;
-            margin-top:20px;
-            border-radius:20px;
+        .receipt-title span{
+            color:#0d47a1;
+            margin:0 10px;
+            font-weight:bold;
         }
 
         .receipt-info{
             text-align:right;
-            font-size:14px;
-            line-height:1.9;
+            font-size:15px;
+            line-height:2;
         }
 
         .receipt-info strong{
             color:#111;
         }
 
-        /* BODY */
-        .receipt-body{
-            padding:25px 30px 30px;
+        .receipt-id{
+            background:#0d47a1;
+            color:#fff;
+            padding:6px 14px;
+            border-radius:5px;
+            font-weight:700;
+            display:inline-block;
         }
 
-        /* INFO BOX */
+        .top-line{
+            height:3px;
+            background:#0d47a1;
+            margin-top:25px;
+            border-radius:30px;
+        }
+
+        /* BODY */
+
+        .content{
+            padding:30px 35px;
+        }
+
+        /* BOX */
+
         .info-box{
-            border:1px solid #dbe3f0;
+            border:1px solid #d7dfed;
             border-radius:10px;
             overflow:hidden;
-            margin-bottom:20px;
-        }
-
-        .info-header{
-            padding:12px 18px;
-            font-size:18px;
-            font-weight:700;
+            background:#fff;
         }
 
         .student-header{
@@ -83,18 +96,24 @@
         }
 
         .payment-header{
-            background:#eefbf1;
+            background:#eefaf1;
             color:#198754;
         }
 
+        .info-header{
+            padding:16px 20px;
+            font-size:22px;
+            font-weight:700;
+        }
+
         .info-content{
-            padding:18px;
+            padding:15px 18px;
         }
 
         .info-row{
-            padding:8px 0;
-            border-bottom:1px solid #eee;
-            font-size:14px;
+            padding:12px 0;
+            border-bottom:1px solid #ececec;
+            font-size:15px;
         }
 
         .info-row:last-child{
@@ -102,80 +121,84 @@
         }
 
         .label{
-            font-weight:700;
-            width:90px;
+            width:85px;
             display:inline-block;
+            font-weight:700;
+        }
+
+        /* STATUS */
+
+        .status{
+            background:#198754;
+            color:#fff;
+            padding:5px 12px;
+            border-radius:6px;
+            font-size:13px;
+            font-weight:700;
         }
 
         /* TABLE */
+
         .payment-table{
             width:100%;
             border-collapse:collapse;
-            margin-top:10px;
+            margin-top:28px;
         }
 
         .payment-table th{
             background:#0d47a1;
             color:#fff;
-            padding:12px;
-            font-size:14px;
+            padding:14px;
             text-align:left;
+            font-size:15px;
         }
 
         .payment-table td{
-            padding:12px;
-            border:1px solid #eee;
-            font-size:14px;
+            border:1px solid #e9edf5;
+            padding:14px;
+            font-size:15px;
         }
 
         /* TOTAL */
+
         .total-box{
-            margin-top:25px;
-            border:2px solid #dbe3f0;
+            margin-top:28px;
+            border:2px solid #cfdcf3;
             border-radius:12px;
-            padding:18px 22px;
             background:#f8fbff;
+            padding:22px 25px;
         }
 
         .total-title{
-            font-size:26px;
+            font-size:32px;
             font-weight:700;
             color:#0d47a1;
         }
 
         .total-amount{
-            font-size:30px;
+            font-size:38px;
             font-weight:700;
             color:#0d47a1;
             text-align:right;
         }
 
-        /* STATUS */
-        .status-badge{
-            background:#198754;
-            color:#fff;
-            padding:4px 10px;
-            border-radius:5px;
-            font-size:12px;
-            font-weight:700;
-        }
-
         /* FOOTER */
+
         .footer{
             text-align:center;
-            padding:25px;
+            padding:28px 20px 35px;
             color:#0d47a1;
             font-style:italic;
-            font-size:20px;
+            font-size:26px;
         }
 
         .line{
-            width:120px;
-            height:1px;
+            width:130px;
+            height:2px;
             background:#0d47a1;
             display:inline-block;
             vertical-align:middle;
-            margin:0 10px;
+            margin:0 12px;
         }
 
     </style>
@@ -183,74 +206,92 @@
 
 <body>
 
-<div class="receipt-container">
+<div class="receipt">
 
     <!-- HEADER -->
-    <div class="receipt-header">
+
+    <div class="header">
 
         <table width="100%">
             <tr>
 
                 <td>
+
                     <h1 class="brand">B@tchPoint</h1>
 
                     <div class="receipt-title">
+                        <span>—</span>
                         Money Receipt
+                        <span>—</span>
                     </div>
+
                 </td>
 
                 <td class="receipt-info">
+
                     <strong>Receipt No:</strong>
-                    #{{ $payment->id }}
+
+                    <span class="receipt-id">
+                        #{{ $payment->id }}
+                    </span>
 
                     <br>
 
                     <strong>Date:</strong>
+
                     {{ $payment->payment_date ?? 'N/A' }}
+
                 </td>
 
             </tr>
         </table>
 
-        <div class="receipt-top-line"></div>
+        <div class="top-line"></div>
 
     </div>
 
-    <!-- BODY -->
-    <div class="receipt-body">
+    <!-- CONTENT -->
+
+    <div class="content">
 
         <!-- INFO SECTION -->
+
         <table width="100%">
             <tr>
 
                 <!-- STUDENT INFO -->
+
                 <td width="49%" valign="top">
 
                     <div class="info-box">
 
                         <div class="info-header student-header">
-                            STUDENT INFO
+                            👤 STUDENT INFO
                         </div>
 
                         <div class="info-content">
 
                             <div class="info-row">
                                 <span class="label">Name</span>
+                                :
                                 {{ $payment->student?->full_name ?? 'N/A' }}
                             </div>
 
                             <div class="info-row">
                                 <span class="label">Batch</span>
+                                :
                                 {{ $payment->student?->batch_name ?? 'N/A' }}
                             </div>
 
                             <div class="info-row">
                                 <span class="label">ID</span>
+                                :
                                 {{ $payment->student?->student_id ?? 'N/A' }}
                             </div>
 
                             <div class="info-row">
                                 <span class="label">Phone</span>
+                                :
                                 {{ $payment->student?->phone ?? 'N/A' }}
                             </div>
 
@@ -263,37 +304,43 @@
                 <td width="2%"></td>
 
                 <!-- PAYMENT INFO -->
+
                 <td width="49%" valign="top">
 
                     <div class="info-box">
 
                         <div class="info-header payment-header">
-                            PAYMENT INFO
+                            💳 PAYMENT INFO
                         </div>
 
                         <div class="info-content">
 
                             <div class="info-row">
                                 <span class="label">Month</span>
+                                :
                                 {{ $payment->month ?? 'N/A' }}
                             </div>
 
                             <div class="info-row">
                                 <span class="label">Course</span>
+                                :
                                 {{ $payment->student?->course_name ?? 'N/A' }}
                             </div>
 
                             <div class="info-row">
                                 <span class="label">Method</span>
+                                :
                                 {{ $payment->payment_method ?? 'N/A' }}
                             </div>
 
                             <div class="info-row">
                                 <span class="label">Status</span>
+                                :
 
-                                <span class="status-badge">
+                                <span class="status">
                                     {{ ucfirst($payment->status ?? 'N/A') }}
                                 </span>
+
                             </div>
 
                         </div>
@@ -306,13 +353,14 @@
         </table>
 
         <!-- PAYMENT TABLE -->
+
         <table class="payment-table">
 
             <thead>
                 <tr>
                     <th width="10%">#</th>
                     <th>Description</th>
-                    <th width="25%">Amount</th>
+                    <th width="28%">Amount</th>
                 </tr>
             </thead>
 
@@ -335,13 +383,14 @@
         </table>
 
         <!-- TOTAL -->
+
         <div class="total-box">
 
             <table width="100%">
                 <tr>
 
                     <td class="total-title">
-                        TOTAL PAID
+                        🧾 TOTAL PAID
                     </td>
 
                     <td class="total-amount">
@@ -356,6 +405,7 @@
     </div>
 
     <!-- FOOTER -->
+
     <div class="footer">
 
         <span class="line"></span>
