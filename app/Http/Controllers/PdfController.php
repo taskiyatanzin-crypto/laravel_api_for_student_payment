@@ -18,7 +18,7 @@ class PdfController extends Controller
             $pdf = Pdf::loadView('receipt', compact('payment'));
 
             // 3. Define folder inside public storage
-            $dir = storage_path('app/public/receipts');
+            $dir = public_path('receipts');
 
             // 4. Create folder if not exists
             if (!file_exists($dir)) {
@@ -35,7 +35,7 @@ class PdfController extends Controller
             file_put_contents($filePath, $pdf->output());
 
             // 8. Public URL (for browser + WhatsApp)
-            $url = asset('storage/receipts/' . $fileName);
+            $url = asset('receipts/' . $fileName);
 
             return response()->json([
                 'success' => true,
