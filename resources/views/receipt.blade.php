@@ -57,6 +57,7 @@
             flex: 1;
             border: 1px solid #eee;
             padding: 15px;
+            margin:left;
         }
 
         .title {
@@ -137,33 +138,34 @@
     <div class="content">
 
         <!-- INFO ROW -->
-<div class="row">
+        <div class="row">
 
-    <div class="box">
-        <div class="title">Student Info</div>
+            <div class="box">
+                <div class="title">Student Info</div>
 
-        <p>Name: {{ $payment->student?->full_name ?? 'N/A' }}</p>
-        <p>Batch: {{ $payment->student?->batch_name ?? 'N/A' }}</p>
-        <p>ID: {{ $payment->student?->student_id ?? 'N/A' }}</p>
-        <p>Phone: {{ $payment->student?->phone ?? 'N/A' }}</p>
-    </div>
+                <p>Name: {{ $payment->student?->full_name ?? 'N/A' }}</p>
+                <p>Batch: {{ $payment->student?->batch_name ?? 'N/A' }}</p>
+                <p>ID: {{ $payment->student?->student_id ?? 'N/A' }}</p>
+                <p>Phone: {{ $payment->student?->phone ?? 'N/A' }}</p>
+            </div>
 
-    <div class="box">
-        <div class="title">Payment Info</div>
+            <div class="box">
+                <div class="title">Payment Info</div>
 
-        <p>Month: {{ $payment->month ?? 'N/A' }}</p>
-        <p>Course: {{ $payment->student?->course_name ?? 'N/A' }}</p>
-        <p>Method: {{ $payment->payment_method ?? 'N/A' }}</p>
+                <p>Month: {{ $payment->month ?? 'N/A' }}</p>
+                <p>Course: {{ $payment->student?->course_name ?? 'N/A' }}</p>
+                <p>Method: {{ $payment->payment_method ?? 'N/A' }}</p>
 
-        <p>
-            Status:
-            <span class="badge">
-                {{ ucfirst($payment->status ?? 'N/A') }}
-            </span>
-        </p>
-    </div>
+                <p>
+                    Status:
+                    <span class="badge">
+                        {{ ucfirst($payment->status ?? 'N/A') }}
+                    </span>
+                </p>
+            </div>
 
-</div>
+        </div>
+
         <!-- TABLE -->
         <table>
             <thead>
