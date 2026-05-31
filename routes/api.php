@@ -9,7 +9,7 @@ use App\Http\Controllers\PdfController;
 
 /*
 |--------------------------------------------------------------------------
-| AUTH
+| AUTH (PUBLIC)
 |--------------------------------------------------------------------------
 */
 Route::post('/register', [StafftController::class, 'store']);
@@ -17,7 +17,7 @@ Route::post('/login', [StafftController::class, 'login']);
 
 /*
 |--------------------------------------------------------------------------
-| STUDENTS
+| STUDENTS (PUBLIC)
 |--------------------------------------------------------------------------
 */
 Route::get('/students', [StudentController::class, 'index']);
@@ -26,29 +26,43 @@ Route::get('/students/{id}', [StudentController::class, 'show']);
 
 /*
 |--------------------------------------------------------------------------
-| PAYMENTS
+| PAYMENTS (PUBLIC)
 |--------------------------------------------------------------------------
 */
 Route::get('/payments', [PaymentController::class, 'index']);
 Route::post('/payments', [PaymentController::class, 'store']);
 Route::get('/payments/{id}', [PaymentController::class, 'show']);
 Route::get('/student-payments/{id}', [PaymentController::class, 'studentPayments']);
+Route::get('/payments/{id}/whatsapp', [PaymentController::class, 'whatsappMessage']);
 
 /*
 |--------------------------------------------------------------------------
-| PDF (CLOUDINARY RECEIPT)
+| PDF RECEIPT (PUBLIC OR OPTIONAL PROTECTED)
 |--------------------------------------------------------------------------
 */
 Route::get('/payments/{id}/receipt', [PdfController::class, 'downloadReceipt']);
 
 /*
 |--------------------------------------------------------------------------
-| AUTH PROTECTED
+| AUTH PROTECTED ROUTES (SANCTUM)
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth:sanctum')->group(function () {
+
+    /*
+    |--------------------------
+    | STAFF
+    |--------------------------
+    */
     Route::get('/staff', [StafftController::class, 'index']);
+    Route::get('/staff/{staff}/edit', [StafftController::class, 'edit']);
+    Route::put('/staff/{staff}', [StafftController::class, 'update']);
+    Route::delete('/staff/{staff}', [StafftController::class, 'destroy']);
+
+    /*
+    |--------------------------
+    | AUTH
+    |--------------------------
+    */
     Route::post('/logout', [StafftController::class, 'logout']);
 });
-
-Route::get('/payments/{id}/whatsapp', [PaymentController::class, 'whatsappMessage']);

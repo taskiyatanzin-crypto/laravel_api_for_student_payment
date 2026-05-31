@@ -69,27 +69,65 @@ class StafftController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Staff $staff)
-    {
-        //
+/**
+ * Show the form data for editing the specified resource.
+ */
+public function edit(Staff $staff)
+{
+    return response()->json([
+        'status' => true,
+        'staff' => $staff
+    ]);
+}
+
+/**
+ * Update the specified resource in storage.
+ */
+public function update(Request $request, Staff $staff)
+{
+    $request->validate([
+        'name' => 'required',
+        'user_name' => 'required',
+        'skill' => 'required',
+        'role' => 'required',
+        'email' => 'required|email|unique:staff,email,' . $staff->id,
+        'password' => 'nullable|confirmed',
+    ]);
+
+    $data = [
+        'name' => $request->name,
+        'user_name' => $request->user_name,
+        'skill' => $request->skill,
+        'role' => $request->role,
+        'email' => $request->email,
+    ];
+
+    // password শুধু দিলে update হবে
+    if ($request->filled('password')) {
+        $data['password'] = Hash::make($request->password);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Staff $staff)
-    {
-        //
-    }
+    $staff->update($data);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Staff $staff)
-    {
-        //
-    }
+    return response()->json([
+        'status' => true,
+        'message' => 'Staff updated successfully',
+        'staff' => $staff
+    ]);
+}
 
+/**
+ * Remove the specified resource from storage.
+ */
+public function destroy(Staff $staff)
+{
+    $staff->delete();
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Staff deleted successfully'
+    ]);
+}
     /**
      * Login Section
      */
