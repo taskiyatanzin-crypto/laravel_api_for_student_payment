@@ -47,7 +47,13 @@ RUN chmod -R 775 storage bootstrap/cache || true
 EXPOSE 10000
 
 # Runtime commands
-CMD php artisan optimize:clear && \
+ CMD sh -c " php artisan optimize:clear && \
     php artisan config:cache && \
-    php artisan migrate --force && \
+    php artisan migrate --force --no-interaction &&\
     php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
+
+
+
+
+
+"
