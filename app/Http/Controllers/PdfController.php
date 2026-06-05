@@ -2,51 +2,53 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Models\Payment;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
-
 class PdfController extends Controller
 {
-public function downloadReceipt($id)
-{
-    try {
+    public function downloadReceipt($id)
+    {
+        try {
 
-        $payment = Payment::with('student')->findOrFail($id);
+            // 1. Get payment with student relation
+            $payment = Payment::with('student')->findOrFail($id);
 
-        $pdf = Pdf::loadView('receipt', compact('payment'));
+            // 2. Generate PDF from blade view
+            $pdf = Pdf::loadView('receipt', compact('payment'));
 
-        $tempFile = tempnam(sys_get_temp_dir(), 'receipt_');
-        file_put_contents($tempFile, $pdf->output());
+            // 3. Define folder inside public storage
+            $dir = public_path('receipts');
 
-        $uploadedFile = Cloudinary::uploadFile(
-            $tempFile,
-            [
-                'resource_type' => 'raw',
-                'folder' => 'receipts',
-                'public_id' => 'receipt_' . $payment->id,
-                'overwrite' => true,
-            ]
-        );
+            // 4. Create folder if not exists
+            if (!file_exists($dir)) {
+                mkdir($dir, 0777, true);
+            }
 
-        unlink($tempFile);
+            // 5. File name
+            $fileName = 'receipt_' . $payment->id . '.pdf';
 
-        $url = $uploadedFile->getSecurePath();
+            // 6. Full file path
+            $filePath = $dir . '/' . $fileName;
 
-        return response()->json([
-            'success' => true,
-            'url' => $url
-        ]);
+            // 7. Save PDF file
+            file_put_contents($filePath, $pdf->output());
 
-    } catch (\Exception $e) {
+            // 8. Public URL (for browser + WhatsApp)
+            $url = asset('receipts/' . $fileName);
 
-        return response()->json([
-            'success' => false,
-            'message' => 'Receipt generation failed',
-            'error' => $e->getMessage()
-        ], 500);
+            return response()->json([
+                'success' => true,
+                'url' => $url
+            ]);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Receipt generation failed',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-}
 }
