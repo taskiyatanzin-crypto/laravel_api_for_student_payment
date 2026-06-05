@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Payment;
 use Barryvdh\DomPDF\Facade\Pdf;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class PdfController extends Controller
 {
@@ -11,31 +12,32 @@ class PdfController extends Controller
     {
         try {
 
-            // 1. Get payment with student relation
+            // 1. Get payment with student
             $payment = Payment::with('student')->findOrFail($id);
 
-            // 2. Generate PDF from blade view
+            // 2. Generate PDF
             $pdf = Pdf::loadView('receipt', compact('payment'));
 
-            // 3. Define folder inside public storage
-            $dir = public_path('receipts');
+            // 3. Create temp file
+            $tempFile = tempnam(sys_get_temp_dir(), 'receipt_');
+            file_put_contents($tempFile, $pdf->output());
 
-            // 4. Create folder if not exists
-            if (!file_exists($dir)) {
-                mkdir($dir, 0777, true);
-            }
+            // 4. Upload to Cloudinary (RAW file)
+            $uploadedFile = Cloudinary::uploadFile(
+                $tempFile,
+                [
+                    'resource_type' => 'raw',
+                    'folder' => 'receipts',
+                    'public_id' => 'receipt_' . $payment->id,
+                    'overwrite' => true,
+                ]
+            );
 
-            // 5. File name
-            $fileName = 'receipt_' . $payment->id . '.pdf';
+            // 5. Remove temp file
+            unlink($tempFile);
 
-            // 6. Full file path
-            $filePath = $dir . '/' . $fileName;
-
-            // 7. Save PDF file
-            file_put_contents($filePath, $pdf->output());
-
-            // 8. Public URL (for browser + WhatsApp)
-            $url = asset('receipts/' . $fileName);
+            // 6. Get Cloudinary URL
+            $url = $uploadedFile->getSecurePath();
 
             return response()->json([
                 'success' => true,
