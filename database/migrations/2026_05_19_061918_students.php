@@ -33,7 +33,6 @@ Schema::create('students', function (Blueprint $table) {
     ])->default('active');
 
     $table->timestamps();
-
 });
     }
 
@@ -44,5 +43,4 @@ Schema::create('students', function (Blueprint $table) {
     {
         //
     }
-
 };
