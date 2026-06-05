@@ -44,12 +44,10 @@ COPY --from=frontend /app/public/build ./public/build
 
 RUN chmod -R 775 storage bootstrap/cache || true
 
-# 🔥 IMPORTANT: remove SQLite if exists
-RUN rm -f database/database.sqlite || true
-
 EXPOSE 10000
 
-# ❌ NO MIGRATE HERE (IMPORTANT FIX)
+# Runtime commands
 CMD php artisan optimize:clear && \
     php artisan config:cache && \
+    php artisan migrate --force && \
     php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
