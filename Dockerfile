@@ -11,7 +11,10 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install \
+    --no-dev \
+    --optimize-autoloader \
+    --no-interaction
 
 
 # ---------- Stage 2: Frontend ----------
@@ -19,7 +22,7 @@ FROM node:22 AS frontend
 
 WORKDIR /app
 
-COPY --from=backend /var/www /app
+COPY --from=backend /var/www .
 
 RUN npm install
 RUN npm run build
@@ -36,13 +39,15 @@ WORKDIR /var/www
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-COPY --from=backend /var/www /var/www
-COPY --from=frontend /app/public/build /var/www/public/build
+COPY --from=backend /var/www .
+COPY --from=frontend /app/public/build ./public/build
 
 RUN chmod -R 775 storage bootstrap/cache || true
 
 EXPOSE 10000
 
-# ---------- Runtime ----------
-
-CMD sh -c "php artisan optimize:clear && php artisan config:clear && php artisan cache:clear && php artisan migrate --force --no-interaction && php artisan serve --host=0.0.0.0 --port=${PORT:-10000}"
+# Runtime commands
+CMD php artisan optimize:clear && \
+    php artisan config:cache && \
+    php artisan migrate --force && \
+    php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
