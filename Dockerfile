@@ -12,7 +12,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY . .
 
 # 👉 env example copy (important)
-
+RUN cp .env.example .env || true
 
 # 👉 install ছাড়া scripts run না (safe)
 RUN composer install \
