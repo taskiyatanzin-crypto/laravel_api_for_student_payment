@@ -11,10 +11,15 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 COPY . .
 
+# 👉 env example copy (important)
+RUN cp .env.example .env || true
+
+# 👉 install ছাড়া scripts run না (safe)
 RUN composer install \
     --no-dev \
     --optimize-autoloader \
-    --no-interaction
+    --no-interaction \
+    --no-scripts
 
 
 # ---------- Stage 2: Frontend ----------
@@ -37,17 +42,19 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /var/www
 
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
 COPY --from=backend /var/www .
 COPY --from=frontend /app/public/build ./public/build
 
-RUN chmod -R 775 storage bootstrap/cache || true
+# 👉 permissions fix
+RUN chmod -R 777 storage bootstrap/cache || true
 
 EXPOSE 10000
 
-# Runtime commands
-CMD php artisan optimize:clear && \
+# 👉 startup script (safe way)
+CMD php artisan key:generate --force && \
+    php artisan config:clear && \
     php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache && \
     php artisan migrate --force && \
     php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
