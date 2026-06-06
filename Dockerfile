@@ -12,7 +12,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY . .
 
 # 👉 env example copy (important)
-RUN cp .env.example .env || true
+
 
 # 👉 install ছাড়া scripts run না (safe)
 RUN composer install \
@@ -51,7 +51,9 @@ RUN chmod -R 777 storage bootstrap/cache || true
 EXPOSE 10000
 
 # 👉 startup script (safe way)
-CMD php artisan key:generate --force && \
+CMD php artisan config:clear && \
+    php artisan cache:clear && \
+    php artisan config:cache && \
+    php artisan key:generate --force && \
     php artisan migrate --force && \
     php artisan serve --host=0.0.0.0 --port=${PORT}
-
