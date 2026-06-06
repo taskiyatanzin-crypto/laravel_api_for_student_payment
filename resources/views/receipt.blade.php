@@ -211,7 +211,7 @@
 
                 <td>
 
-                    <h1 class="brand">B@tchPoint</h1>
+                    <h1 class="brand">Betikkrom </h1>
 
                     <div class="receipt-title">
                         <span>—</span>
