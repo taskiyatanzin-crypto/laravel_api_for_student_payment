@@ -11,10 +11,10 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 COPY . .
 
-# 👉 env example copy (important)
+# 👉 minimal env file (IMPORTANT)
+RUN touch .env
 
-
-# 👉 install ছাড়া scripts run না (safe)
+# 👉 install dependencies
 RUN composer install \
     --no-dev \
     --optimize-autoloader \
@@ -48,12 +48,13 @@ COPY --from=frontend /app/public/build ./public/build
 # 👉 permissions fix
 RUN chmod -R 777 storage bootstrap/cache || true
 
+# 👉 ensure .env exists
+RUN touch .env
+
 EXPOSE 10000
 
-# 👉 startup script (safe way)
 CMD php artisan config:clear && \
     php artisan cache:clear && \
     php artisan config:cache && \
-    php artisan key:generate --force && \
     php artisan migrate --force && \
     php artisan serve --host=0.0.0.0 --port=${PORT}
