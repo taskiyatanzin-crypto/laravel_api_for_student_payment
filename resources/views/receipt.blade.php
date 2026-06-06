@@ -211,7 +211,7 @@
 
                 <td>
 
-                    <h1 class="brand">Betikkrom </h1>
+                    <h1 class="brand">Betikrom Academic Care</h1>
 
                     <div class="receipt-title">
                         <span>—</span>
